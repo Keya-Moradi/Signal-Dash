@@ -1,0 +1,37 @@
+<h2>Experiments</h2>
+
+<% if (experiments.length === 0) { %>
+  <p>No experiments yet. <a href="/experiments/new">Create one</a> to get started.</p>
+<% } else { %>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Owner</th>
+        <th>Requested</th>
+        <th>Started</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% experiments.forEach(exp => { %>
+        <tr>
+          <td><%= exp.id %></td>
+          <td><a href="/experiments/<%= exp.id %>"><%= exp.name %></a></td>
+          <td><span class="badge badge-<%= exp.status.toLowerCase() %>"><%= exp.status %></span></td>
+          <td><%= exp.owner %></td>
+          <td><%= new Date(exp.requested_at).toLocaleDateString() %></td>
+          <td><%= exp.started_at ? new Date(exp.started_at).toLocaleDateString() : '-' %></td>
+          <td>
+            <a href="/experiments/<%= exp.id %>">View</a>
+            <% if (exp.status === 'Running') { %>
+              | <a href="/experiments/<%= exp.id %>/readout">Readout</a>
+            <% } %>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>

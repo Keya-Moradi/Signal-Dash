@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: signaldash
+    ports:
+      - "5432:5432"
+    volumes:
+      - signaldash_pg:/var/lib/postgresql/data
+
+volumes:
+  signaldash_pg:

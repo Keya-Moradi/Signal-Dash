@@ -1,0 +1,38 @@
+<h2>Create New Experiment</h2>
+
+<form method="POST" action="/experiments">
+  <div class="form-group">
+    <label for="name">Experiment Name *</label>
+    <input type="text" id="name" name="name" required placeholder="e.g., Homepage CTA Button Color">
+  </div>
+
+  <div class="form-group">
+    <label for="hypothesis">Hypothesis *</label>
+    <textarea id="hypothesis" name="hypothesis" required rows="3" placeholder="e.g., Changing the CTA button from blue to green will increase click-through rate"></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="primary_metric">Primary Metric *</label>
+    <input type="text" id="primary_metric" name="primary_metric" value="conversion" required>
+  </div>
+
+  <div class="form-group">
+    <label for="owner">Owner (Email) *</label>
+    <input type="email" id="owner" name="owner" required placeholder="you@example.com">
+  </div>
+
+  <div class="form-group">
+    <label for="control_name">Control Variant Name *</label>
+    <input type="text" id="control_name" name="control_name" required placeholder="e.g., Control (Blue)" value="Control">
+  </div>
+
+  <div class="form-group">
+    <label for="variant_name">Test Variant Name *</label>
+    <input type="text" id="variant_name" name="variant_name" required placeholder="e.g., Variant (Green)" value="Variant A">
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Create Experiment</button>
+    <a href="/" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>

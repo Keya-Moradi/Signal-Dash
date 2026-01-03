@@ -1,0 +1,149 @@
+<div class="experiment-header">
+  <h2><%= experiment.name %></h2>
+  <span class="badge badge-<%= experiment.status.toLowerCase() %>"><%= experiment.status %></span>
+</div>
+
+<div class="experiment-meta">
+  <p><strong>Hypothesis:</strong> <%= experiment.hypothesis %></p>
+  <p><strong>Primary Metric:</strong> <%= experiment.primary_metric %></p>
+  <p><strong>Owner:</strong> <%= experiment.owner %></p>
+  <p><strong>Requested:</strong> <%= new Date(experiment.requested_at).toLocaleString() %></p>
+  <% if (experiment.started_at) { %>
+    <p><strong>Started:</strong> <%= new Date(experiment.started_at).toLocaleString() %></p>
+  <% } %>
+  <% if (experiment.decision) { %>
+    <p><strong>Decision:</strong> <%= experiment.decision %></p>
+  <% } %>
+  <% if (experiment.notes) { %>
+    <p><strong>Notes:</strong> <%= experiment.notes %></p>
+  <% } %>
+</div>
+
+<h3>Variants</h3>
+<table>
+  <thead>
+    <tr>
+      <th>Variant</th>
+      <th>ID</th>
+      <th>Exposures</th>
+      <th>Conversions</th>
+      <th>Conversion Rate</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% variants.forEach(v => { %>
+      <tr>
+        <td><%= v.name %> <%= v.is_control ? '(Control)' : '' %></td>
+        <td><%= v.id %></td>
+        <td><%= v.exposures || 0 %></td>
+        <td><%= v.conversions || 0 %></td>
+        <td><%= v.exposures > 0 ? ((v.conversions / v.exposures) * 100).toFixed(2) : '0.00' %>%</td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<% if (stats) { %>
+  <h3>Results</h3>
+
+  <% if (stats.warnings.length > 0) { %>
+    <div class="warnings">
+      <h4>Warnings:</h4>
+      <ul>
+        <% stats.warnings.forEach(w => { %>
+          <li><%= w %></li>
+        <% }); %>
+      </ul>
+    </div>
+  <% } %>
+
+  <div class="stats-summary">
+    <div class="stat-card">
+      <h4>Lift</h4>
+      <p class="stat-value <%= stats.lift > 0 ? 'positive' : 'negative' %>">
+        <%= stats.lift > 0 ? '+' : '' %><%= stats.lift.toFixed(2) %>%
+      </p>
+    </div>
+    <div class="stat-card">
+      <h4>P-Value</h4>
+      <p class="stat-value"><%= stats.pValue ? stats.pValue.toFixed(4) : 'N/A' %></p>
+    </div>
+    <div class="stat-card">
+      <h4>Significant?</h4>
+      <p class="stat-value"><%= stats.isSignificant ? 'Yes' : 'No' %></p>
+    </div>
+    <% if (stats.confidenceInterval) { %>
+      <div class="stat-card">
+        <h4>95% CI</h4>
+        <p class="stat-value">
+          [<%= (stats.confidenceInterval.lower * 100).toFixed(2) %>%,
+          <%= (stats.confidenceInterval.upper * 100).toFixed(2) %>%]
+        </p>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="conversionChart"></canvas>
+  </div>
+
+  <script>
+    const ctx = document.getElementById('conversionChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [
+          '<%= variants.find(v => v.is_control)?.name || "Control" %>',
+          '<%= variants.find(v => !v.is_control)?.name || "Variant" %>'
+        ],
+        datasets: [{
+          label: 'Conversion Rate (%)',
+          data: [
+            <%= (stats.control.conversionRate * 100).toFixed(2) %>,
+            <%= (stats.variant.conversionRate * 100).toFixed(2) %>
+          ],
+          backgroundColor: [
+            'rgba(54, 162, 235, 0.5)',
+            'rgba(75, 192, 192, 0.5)'
+          ],
+          borderColor: [
+            'rgba(54, 162, 235, 1)',
+            'rgba(75, 192, 192, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Conversion Rate (%)'
+            }
+          }
+        }
+      }
+    });
+  </script>
+<% } %>
+
+<h3>Change Status</h3>
+<form method="POST" action="/experiments/<%= experiment.id %>/status" class="status-form">
+  <select name="status">
+    <option value="Draft" <%= experiment.status === 'Draft' ? 'selected' : '' %>>Draft</option>
+    <option value="Review" <%= experiment.status === 'Review' ? 'selected' : '' %>>Review</option>
+    <option value="Running" <%= experiment.status === 'Running' ? 'selected' : '' %>>Running</option>
+    <option value="Readout" <%= experiment.status === 'Readout' ? 'selected' : '' %>>Readout</option>
+    <option value="Shipped" <%= experiment.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+    <option value="Killed" <%= experiment.status === 'Killed' ? 'selected' : '' %>>Killed</option>
+  </select>
+  <button type="submit" class="btn btn-primary">Update Status</button>
+</form>
+
+<% if (experiment.status === 'Running' || experiment.status === 'Readout') { %>
+  <div style="margin-top: 20px;">
+    <a href="/experiments/<%= experiment.id %>/readout" class="btn btn-primary">View Readout</a>
+  </div>
+<% } %>

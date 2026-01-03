@@ -1,0 +1,40 @@
+<div class="experiment-header">
+  <h2>Readout: <%= experiment.name %></h2>
+  <span class="badge badge-<%= experiment.status.toLowerCase() %>"><%= experiment.status %></span>
+</div>
+
+<div class="readout-meta">
+  <p><strong>Generated:</strong> <%= experiment.readout_generated_at ? new Date(experiment.readout_generated_at).toLocaleString() : new Date().toLocaleString() %></p>
+  <p><strong>Source:</strong> <%= readout.source %></p>
+  <% if (experiment.readout_generated_at) { %>
+    <p><em>Using cached readout. <a href="/experiments/<%= experiment.id %>/readout?regenerate=1">Regenerate</a></em></p>
+  <% } %>
+</div>
+
+<div class="readout-content">
+  <%- readout.summary.replace(/\n/g, '<br>').replace(/##/g, '<h3>').replace(/<h3>/g, '</p><h3>').replace(/<\/h3>/g, '</h3><p>').replace(/^<\/p>/, '').replace(/<p>$/, '') %>
+</div>
+
+<div class="readout-actions">
+  <h3>Make Decision</h3>
+  <form method="POST" action="/experiments/<%= experiment.id %>/decision">
+    <div class="form-group">
+      <label for="decision">Decision</label>
+      <select name="decision" id="decision">
+        <option value="">-- Select --</option>
+        <option value="Ship">Ship</option>
+        <option value="Kill">Kill</option>
+        <option value="Iterate">Iterate</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="notes">Notes</label>
+      <textarea name="notes" id="notes" rows="3"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Decision</button>
+  </form>
+</div>
+
+<div style="margin-top: 20px;">
+  <a href="/experiments/<%= experiment.id %>" class="btn btn-secondary">Back to Experiment</a>
+</div>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title || 'Signal Dash' %></title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="container">
+        <h1><a href="/">Signal Dash</a></h1>
+        <ul>
+          <li><a href="/">Experiments</a></li>
+          <li><a href="/experiments/new">Create Experiment</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container">
+    <%- body %>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Signal Dash - ExperimentOps Lite</p>
+    </div>
+  </footer>
+</body>
+</html>
