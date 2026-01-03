@@ -194,8 +194,6 @@ ANTHROPIC_API_KEY=sk-ant-...
 ![Readout](docs/screenshots/readout.png)
 *AI-generated readout with decision form*
 
-> **Note**: To add screenshots, run the app locally and capture images following instructions in [docs/screenshots/README.md](docs/screenshots/README.md)
-
 ## Demo Script
 
 Follow these steps to explore Signal Dash:
